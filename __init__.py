@@ -1,14 +1,13 @@
 # coding: utf-8
 from fabric.api import task, env
-# from unipath import Path
 from .helpers import make_environment
+import os
 
-import setup
+#tasks
 import db
+import setup
 import deploy
 
-# Always run fabric from the repository root dir.
-# Path(__file__).parent.parent.chdir()
 
 RSYNC_EXCLUDE = [
     '*.db',
@@ -27,43 +26,44 @@ RSYNC_EXCLUDE = [
     '.ropeproject',
 ]
 
+# Virtualenv server folder
+env.envserver = '~/env' 
+# Folder of all projects on the server
+env.projserver = '~/Projects'
+
+
 
 @task
 def stage():
-	make_environment('staging', 'guilhermelouro.com.br')
+    env.environment = 'staging'
+
+    # Connection
+    env.user = 'guilouro'
+    env.hosts = ['guilhermelouro.com.br',]
+    env.project = 'GuiSite'
 
 
 @task
 def production():
-	make_environment('production', 'guilhermelouro.com.br')
+    make_environment('production', 'guilhermelouro.com.br')
+
+
+def config():
+    env.project_local_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    env.project_server_path = os.path.join(env.projserver, env.project)
+
+    env.manage = os.path.join(env.projserver,env.project,'manage.py')
+    env.activate = os.path.join(env.envserver,env.project,'bin','activate')
+
+    # Requirements
+    env.requirements = os.path.join(env.project_server_path, 'requirements.txt')
+    
+    
 
 
 
-def make_environment(name, domain):
+
+def make_environment(environment, user, hosts, domain):
     """
     Configure Fabric's environment according our conventions.
     """
-    project = domain.partition('.')[0]
-    cname = '%s.%s' % (name, domain)
-    env.user = project
-    env.hosts = [cname]
-    env.settings = '%s.settings' % project
-    env.PROJECT = Project('~', cname, project)
-
-
-    env.user = ''
-    env.hosts = ''
-    env.project = domain.partition('.')[0]
-    env.environment = name
-    env.home = ''
-    env.local_path = ''
-    env.server_path = ''
-    env.manage = os.path.join('~/www',env.project,'manage.py')
-    env.activate = os.path.join('~/env',env.project,'bin','activate')
-
-    # Requirements path
-    env.requirements = os.path.join(env.server_path, 'requirements.txt')
-
-
-    
-    

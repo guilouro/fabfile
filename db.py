@@ -8,6 +8,6 @@ def syncdb():
     """
     :: Execute syncdb on remote host.
     """
-    require('virtualenv_activate', provided_by=('staging', 'production'))
+    require('activate', provided_by=('staging', 'production'))
 
-    run(('source %(virtualenv_activate)s; python %(manage_file)s syncdb') % env)
+    run(('source %(activate)s; python %(manage)s syncdb') % env)

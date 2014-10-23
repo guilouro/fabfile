@@ -1,7 +1,6 @@
 # coding: utf-8
 from fabric.api import env, require, run, task
 from fabric.context_managers import prefix
-import db
 
 @task
 def lista():
