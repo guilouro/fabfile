@@ -1,6 +1,9 @@
 # coding: utf-8
-from fabric.api import env, require, run, task
+from fabric.colors import red
+from fabric.api import env, require, run, task, cd
 from fabric.context_managers import prefix
+from fabric.contrib.files import exists
+
 
 @task
 def lista():
@@ -17,8 +20,8 @@ def virtualenv():
     """
     require('project', provided_by=('staging', 'production'))
 
-    with prefix("export PROJECT_HOME=$HOME/www"):
-        with prefix("export WORKON_HOME=$HOME/env"):
+    with prefix("export PROJECT_HOME=%(projserver)s" %env):
+        with prefix("export WORKON_HOME=%(envserver)s" %env):
             with prefix("source /usr/local/bin/virtualenvwrapper.sh"):
                 run("mkproject %(project)s" % env)
 
@@ -30,24 +33,20 @@ def requirements():
     """
     require('project', provided_by=('staging', 'production'))
 
-    with prefix("export PROJECT_HOME=$HOME/www"):
-        with prefix("export WORKON_HOME=$HOME/env"):
+    with prefix("export PROJECT_HOME=%(projserver)s" %env):
+        with prefix("export WORKON_HOME=%(envserver)s" %env):
             with prefix("source /usr/local/bin/virtualenvwrapper.sh"):
                 run("workon %(project)s; pip install -r %(requirements)s; deactivate" % env)
 
-
 @task
-def init():
+def del_app():
     """
-    :: Initialize remote host environment.
+    :: Delete project
     """
-    require('root', provided_by=('staging', 'production'))
+    require('project', provided_by=('staging', 'production'))
 
-    # Create virtualenv to wrap the environment
-    virtualenv()
-    # Send the project to the remote host
-    deploy.send()
-    # Install dependencies on the virtualenv
-    requirements()
-    # Create the database
-    db.syncdb()
+    with cd(env.projserver):
+        with prefix("export PROJECT_HOME=%(projserver)s" %env):
+            with prefix("export WORKON_HOME=%(envserver)s" %env):
+                with prefix("source /usr/local/bin/virtualenvwrapper.sh"):
+                    run('rm -rf %(project)s; rmvirtualenv %(project)s' %env)

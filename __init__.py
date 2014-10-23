@@ -1,30 +1,13 @@
 # coding: utf-8
-from fabric.api import task, env
+from fabric.api import task, env, require
 from .helpers import make_environment
 import os
 
 #tasks
+import deploy
 import db
 import setup
-import deploy
 
-
-RSYNC_EXCLUDE = [
-    '*.db',
-    '*.pyc',
-    '*.sqlite3',
-    '.git*',
-    '.sass-cache',
-    'media/*',
-    'tests/*',
-    'static/sass',
-    'DS_Store',
-    'pylintrc',
-    'fabfile.py',
-    'config.rb',
-    'settings/production.py',
-    '.ropeproject',
-]
 
 # Virtualenv server folder
 env.envserver = '~/env' 
@@ -41,14 +24,21 @@ def stage():
     env.user = 'guilouro'
     env.hosts = ['guilhermelouro.com.br',]
     env.project = 'GuiSite'
+    _config()
 
 
 @task
 def production():
-    make_environment('production', 'guilhermelouro.com.br')
+    env.environment = 'production'
+
+    # Connection
+    env.user = 'guilouro'
+    env.hosts = ['guilhermelouro.com.br',]
+    env.project = 'GuiSite'
+    _config()
 
 
-def config():
+def _config():
     env.project_local_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     env.project_server_path = os.path.join(env.projserver, env.project)
 
@@ -60,10 +50,19 @@ def config():
     
     
 
-
-
-
-def make_environment(environment, user, hosts, domain):
+@task
+def bootstrap():
     """
-    Configure Fabric's environment according our conventions.
+    :: Initialize remote host environment.
     """
+    require('project', provided_by=('staging', 'production'))
+
+
+    # Create virtualenv to wrap the environment
+    setup.virtualenv()
+    # Send the project to the remote host
+    deploy.send()
+    # Install dependencies on the virtualenv
+    setup.requirements()
+    # Create the database
+    db.syncdb()
