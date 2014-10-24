@@ -27,17 +27,25 @@ def production():
     env.environment = 'production'
 
     # Connection
-    env.user = 'guilouro'
-    env.hosts = ['guilhermelouro.com.br',]
-    env.project = 'GuiSite'
+    env.user = ''
+    env.hosts = ['',]
+    env.project = ''
     _config()
 
 
 def _config():
+    
     # Virtualenv server folder
     env.envserver = '~/env' 
     # Folder of all projects on the server
     env.projserver = '~/Projects'
+
+    # Gunicorn
+    env.gunicorn_wsgi_app = 'guilouro.wsgi:application'
+    env.gunicorn_pidfile = '/tmp/gunicorn_%(project)s.pid' %env
+    env.gunicorn_bind = '127.0.0.1:9000'
+    env.django_settings_module = 'guilouro.settings'
+
 
     # Local and Server Paths
     env.project_local_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -51,11 +59,6 @@ def _config():
     # Requirements
     env.requirements = os.path.join(env.project_server_path, 'requirements.txt')
 
-    # Gunicorn
-    env.gunicorn_wsgi_app = 'guilouro.wsgi:application'
-    env.gunicorn_pidfile = '/tmp/gunicorn_%(project)s.pid' %env
-    env.gunicorn_bind = '127.0.0.1:9000'
-    env.django_settings_module = 'guilouro.settings'
     
 
 @task

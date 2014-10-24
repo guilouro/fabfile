@@ -45,3 +45,12 @@ def collectstatic():
     require('project_server_path', provided_by=('staging', 'production'))
 
     run(('source %(activate)s; python %(manage)s collectstatic --noinput; deactivate') % env)
+
+
+@task
+def update():
+    """
+    :: Send files and execute collectstatic
+    """
+    send()
+    collectstatic()
