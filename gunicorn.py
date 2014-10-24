@@ -6,7 +6,9 @@ def start():
     """
     :: Started gunicorn on server
     """
+    
     require('project', provided_by=('staging', 'production'))
+
     with prefix("export PROJECT_HOME=%(projserver)s" %env):
         with prefix("export WORKON_HOME=%(envserver)s" %env):
             with prefix("source /usr/local/bin/virtualenvwrapper.sh"):

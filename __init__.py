@@ -75,3 +75,5 @@ def bootstrap():
     deploy.collectstatic()
     # Create the database
     db.syncdb()
+    # Start gunicorn
+    gunicorn.start()
