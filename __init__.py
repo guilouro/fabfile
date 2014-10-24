@@ -1,19 +1,14 @@
 # coding: utf-8
-from fabric.api import task, env, require
-from .helpers import make_environment
 import os
+from fabric.api import task, env, require, prefix, run
 
-#tasks
+
+
+# Tasks
 import deploy
 import db
 import setup
-
-
-# Virtualenv server folder
-env.envserver = '~/env' 
-# Folder of all projects on the server
-env.projserver = '~/Projects'
-
+import gunicorn
 
 
 @task
@@ -39,15 +34,28 @@ def production():
 
 
 def _config():
+    # Virtualenv server folder
+    env.envserver = '~/env' 
+    # Folder of all projects on the server
+    env.projserver = '~/Projects'
+
+    # Local and Server Paths
     env.project_local_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     env.project_server_path = os.path.join(env.projserver, env.project)
 
+    # Vitualenv paths
+    env.virtualenv = os.path.join(env.envserver, env.project)
     env.manage = os.path.join(env.projserver,env.project,'manage.py')
     env.activate = os.path.join(env.envserver,env.project,'bin','activate')
 
     # Requirements
     env.requirements = os.path.join(env.project_server_path, 'requirements.txt')
-    
+
+    # Gunicorn
+    env.gunicorn_wsgi_app = 'guilouro.wsgi:application'
+    env.gunicorn_pidfile = '/tmp/gunicorn_%(project)s.pid' %env
+    env.gunicorn_bind = '127.0.0.1:9000'
+    env.django_settings_module = 'guilouro.settings'
     
 
 @task
@@ -57,12 +65,13 @@ def bootstrap():
     """
     require('project', provided_by=('staging', 'production'))
 
-
     # Create virtualenv to wrap the environment
     setup.virtualenv()
     # Send the project to the remote host
     deploy.send()
     # Install dependencies on the virtualenv
     setup.requirements()
+    # Execute collectstatic
+    deploy.collectstatic()
     # Create the database
     db.syncdb()

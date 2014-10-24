@@ -30,6 +30,7 @@ def send():
             'config.rb',
             'settings/production.py',
             '.ropeproject',
+            'src',
         ],
         delete=True,
         extra_opts='--omit-dir-times',
