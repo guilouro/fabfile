@@ -16,9 +16,9 @@ def stage():
     env.environment = 'staging'
 
     # Connection
-    env.user = 'guilouro'
-    env.hosts = ['guilhermelouro.com.br',]
-    env.project = 'GuiSite'
+    env.user = ''
+    env.hosts = ['',]
+    env.project = ''
     _config()
 
 
@@ -41,10 +41,10 @@ def _config():
     env.projserver = '~/Projects'
 
     # Gunicorn
-    env.gunicorn_wsgi_app = 'guilouro.wsgi:application'
+    env.gunicorn_wsgi_app = 'project.wsgi:application'
     env.gunicorn_pidfile = '/tmp/gunicorn_%(project)s.pid' %env
     env.gunicorn_bind = '127.0.0.1:9000'
-    env.django_settings_module = 'guilouro.settings'
+    env.django_settings_module = 'project.settings'
 
 
     # Local and Server Paths
