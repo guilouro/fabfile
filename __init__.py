@@ -43,7 +43,7 @@ def _config():
     # Gunicorn
     env.gunicorn_wsgi_app = 'project.wsgi:application'
     env.gunicorn_pidfile = '/tmp/gunicorn_%(project)s.pid' %env
-    env.gunicorn_bind = '127.0.0.1:9000'
+    env.gunicorn_bind = '127.0.0.1:8000'
     env.django_settings_module = 'project.settings'
 
 
@@ -80,3 +80,16 @@ def bootstrap():
     db.syncdb()
     # Start gunicorn
     gunicorn.start()
+
+
+@task
+def update():
+    """
+    :: Upload all changes
+    """
+    deploy.send()
+    setup.requirements()
+    deploy.collectstatic()
+    db.migrate()
+    db.syncdb()
+    gunicorn.reload()

@@ -26,7 +26,7 @@ def send():
             'static/sass',
             'DS_Store',
             'pylintrc',
-            'fabfile.py',
+            'fabfile',
             'config.rb',
             'settings/production.py',
             '.ropeproject',
