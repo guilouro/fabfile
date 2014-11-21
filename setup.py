@@ -3,6 +3,7 @@ from fabric.colors import red
 from fabric.api import env, require, run, task, cd
 from fabric.context_managers import prefix
 from fabric.contrib.files import exists
+from fabric.operations import sudo
 
 
 @task
@@ -37,6 +38,16 @@ def requirements():
         with prefix("export WORKON_HOME=%(envserver)s" %env):
             with prefix("source /usr/local/bin/virtualenvwrapper.sh"):
                 run("workon %(project)s; pip install -r %(requirements)s; deactivate" % env)
+
+
+@task
+def nginx_reload():
+    """
+    :: Restart Nginx on server
+    """
+    sudo('service nginx stop')
+    sudo('service nginx start')
+
 
 @task
 def del_app():
