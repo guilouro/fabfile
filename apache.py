@@ -10,7 +10,7 @@ def upload_apache_conf():
     require('project', provided_by=('staging', 'production', ))
 
     env.apache_conf = '%(project_local_path)s/%(project)s/%(project)s.conf' % env
-    env.apache_path = '/home/%(user)s/.apache-conf/' % env
+    env.apache_path = '~/.apache-conf/' % env
 
     put('%(apache_conf)s' % env, '%(apache_path)s' % env)
 
@@ -24,6 +24,18 @@ def remove_conf():
     """
     require('project', provided_by=('staging', 'production', ))
 
-    env.apache_file = '/home/%(user)s/.apache-conf/%(project)s.conf' % env
+    env.apache_file = '~/.apache-conf/%(project)s.conf' % env
 
     run('rm %(apache_file)s' % env)
+
+
+@task
+def touch():
+    """
+    :: Touch wsgi
+    """
+    require('project', provided_by=('staging', 'production', ))
+
+    env.wsgi_file = '%(project_server_path)s/%(project)s/wsgi.py' % env
+
+    run('touch %(wsgi_file)s')
