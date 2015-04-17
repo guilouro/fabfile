@@ -9,6 +9,7 @@ import deploy
 import db
 import setup
 import gunicorn
+import apache
 
 
 @task
@@ -16,9 +17,9 @@ def stage():
     env.environment = 'staging'
 
     # Connection
-    env.user = ''
-    env.hosts = ['',]
-    env.project = ''
+    env.user = 'guilouro'
+    env.hosts = ['guilhermelouro.com.br',]
+    env.project = 'finance'
     _config()
 
 
@@ -34,9 +35,9 @@ def production():
 
 
 def _config():
-    
+
     # Virtualenv server folder
-    env.envserver = '~/env' 
+    env.envserver = '~/env'
     # Folder of all projects on the server
     env.projserver = '~/Projects'
 
@@ -59,7 +60,7 @@ def _config():
     # Requirements
     env.requirements = os.path.join(env.project_server_path, 'requirements.txt')
 
-    
+
 
 @task
 def bootstrap():

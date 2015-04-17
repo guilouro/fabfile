@@ -30,6 +30,7 @@ def send():
             'config.rb',
             'settings/production.py',
             '.ropeproject',
+            '*.conf'
             'src',
         ],
         delete=True,
