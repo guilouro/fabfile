@@ -20,6 +20,7 @@ def stage():
     env.user = 'guilouro'
     env.hosts = ['guilhermelouro.com.br',]
     env.project = 'finance'
+    env.server = 'apache'
     _config()
 
 
@@ -79,8 +80,12 @@ def bootstrap():
     deploy.collectstatic()
     # Create the database
     db.syncdb()
-    # Start gunicorn
-    gunicorn.start()
+
+    if env.server == 'apache':
+        apache.upload_apache_conf()
+    elif env.server == 'gunicorn':
+        # Start gunicorn
+        gunicorn.start()
 
 
 @task
@@ -93,4 +98,8 @@ def update():
     deploy.collectstatic()
     db.migrate()
     db.syncdb()
-    gunicorn.reload()
+
+    if env.server == 'apache':
+        apache.touch
+    elif env.server == 'gunicorn':
+        gunicorn.reload()
