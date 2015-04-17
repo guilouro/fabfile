@@ -17,10 +17,10 @@ def stage():
     env.environment = 'staging'
 
     # Connection
-    env.user = 'guilouro'
-    env.hosts = ['guilhermelouro.com.br',]
-    env.project = 'finance'
-    env.server = 'apache'
+    env.user = ''
+    env.hosts = ['',]
+    env.project = ''
+    env.server = ''
     _config()
 
 
