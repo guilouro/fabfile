@@ -6,7 +6,7 @@ def start():
     """
     :: Started gunicorn on server
     """
-    
+
     require('project', provided_by=('staging', 'production'))
 
     with prefix("export PROJECT_HOME=%(projserver)s" %env):
@@ -16,18 +16,18 @@ def start():
 
 @task
 def stop():
-	"""
-	:: Stoped gunicorn on server
-	"""
-	require('gunicorn_pidfile', provided_by=('staging', 'production'))
+    """
+    :: Stoped gunicorn on server
+    """
+    require('gunicorn_pidfile', provided_by=('staging', 'production'))
 
-	run('kill `cat %(gunicorn_pidfile)s`' %env)
+    run('kill `cat %(gunicorn_pidfile)s`' %env)
 
 
 @task
 def reload():
-	"""
+    """
     :: Reloaded gunicorn on server
     """
-	stop()
-	start()
+    stop()
+    start()
