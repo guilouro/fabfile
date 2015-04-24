@@ -38,4 +38,4 @@ def touch():
 
     env.wsgi_file = '%(project_server_path)s/%(project)s/wsgi.py' % env
 
-    run('touch %(wsgi_file)s')
+    run('touch %(wsgi_file)s' % env)

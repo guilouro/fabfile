@@ -100,6 +100,6 @@ def update():
     db.syncdb()
 
     if env.server == 'apache':
-        apache.touch
+        apache.touch()
     elif env.server == 'gunicorn':
         gunicorn.reload()
